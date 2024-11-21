@@ -1,5 +1,6 @@
 package Entities;
 
+import Entities.AbstractEntity;
 import Utils.Cell;
 import Utils.GameMap;
 import javafx.scene.control.Button;
@@ -8,17 +9,25 @@ import java.util.Collections;
 import java.util.List;
 
 public class Tree extends AbstractEntity {
+    private static double chance = 0.27; // Текущий шанс размножения
     private Cell cell;
-
-    public int getAge() {
-        return age;
-    }
-
     private int age;
 
     public Tree(Cell cell, int age) {
         this.cell = cell;
         this.age = age;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public static void setChance(double newChance) {
+        chance = newChance;
+    }
+
+    public static double getChance() {
+        return chance;
     }
 
     @Override
@@ -27,18 +36,13 @@ public class Tree extends AbstractEntity {
         btn.setText(String.valueOf(age));
 
         if (age <= 0) {
-            cell.setEntity(null);
-            Button button = cell.getButton();
-            if (button != null) {
-                button.setStyle("-fx-background-color: lightgray;");
-                button.setText("");
-            }
+            removeTree();
             return;
         }
 
         age--;
 
-        if (Math.random() < 0.2) {
+        if (Math.random() < chance) {
             GameMap gameMap = cell.getGameMap();
             List<Cell> neighbors = gameMap.getCellsAround(cell.getPosition(), 1);
 
@@ -57,5 +61,12 @@ public class Tree extends AbstractEntity {
         }
     }
 
-
+    private void removeTree() {
+        cell.setEntity(null);
+        Button button = cell.getButton();
+        if (button != null) {
+            button.setStyle("-fx-background-color: lightgray;");
+            button.setText("");
+        }
+    }
 }
