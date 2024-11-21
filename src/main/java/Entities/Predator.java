@@ -1,14 +1,15 @@
 package Entities;
 
 import Enums.Gender;
+import Utils.IMovable;
 
-public class Predators extends AbstractEntity {
+public class Predator extends AbstractEntity implements IMovable {
     private final int viewRange; // подтянем из Simulation
     private Gender gender;
     private int lastMealCooldown;
     private int speed;
 
-    public Predators(int viewRange, Gender gender, int lastMealCooldown, int speed) {
+    public Predator(int viewRange, Gender gender, int lastMealCooldown, int speed) {
         this.viewRange = viewRange;
         this.gender = gender;
         this.lastMealCooldown = lastMealCooldown;
@@ -17,6 +18,11 @@ public class Predators extends AbstractEntity {
 
     @Override
     public void update() {
+
+    }
+
+    @Override
+    public void move() {
 
     }
 }
