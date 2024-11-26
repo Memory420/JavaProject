@@ -47,7 +47,7 @@ public class Tree extends AbstractEntity {
                 .count();
 
         double calculatedChance = (treesAround > 0) ? chance * (1.0 / treesAround) : 1;
-        calculatedChance /= 10;
+        calculatedChance /= 8;
 
         age--;
 
