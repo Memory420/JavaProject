@@ -1,6 +1,5 @@
 package Entities;
 
-import Entities.AbstractEntity;
 import Utils.Cell;
 import Utils.GameMap;
 import javafx.scene.control.Button;
@@ -9,12 +8,11 @@ import java.util.Collections;
 import java.util.List;
 
 public class Tree extends AbstractEntity {
-    private static double chance = 0.27; // Текущий шанс размножения
-    private Cell cell;
+    private double chance = 1; // Текущий шанс размножения
     private int age;
 
     public Tree(Cell cell, int age) {
-        this.cell = cell;
+        setCurrentCell(cell); // Используем сеттер суперкласса
         this.age = age;
     }
 
@@ -22,17 +20,18 @@ public class Tree extends AbstractEntity {
         return age;
     }
 
-    public static void setChance(double newChance) {
-        chance = newChance;
+    public void setChance(double newChance) {
+        this.chance = newChance;
     }
 
-    public static double getChance() {
-        return chance;
+    public double getChance() {
+        return this.chance;
     }
 
     @Override
     public void update() {
-        Button btn = cell.getButton();
+        GameMap gameMap = getCurrentCell().getGameMap();
+        Button btn = getCurrentCell().getButton(); // Используем getCurrentCell()
         btn.setText(String.valueOf(age));
 
         if (age <= 0) {
@@ -40,17 +39,25 @@ public class Tree extends AbstractEntity {
             return;
         }
 
+        List<Cell> twoCellsNeighbors = gameMap.getCellsAround(getCurrentCell().getPosition(), 2);
+        List<Cell> oneCellsNeighbors = gameMap.getCellsAround(getCurrentCell().getPosition(), 1);
+
+        int treesAround = (int) twoCellsNeighbors.stream()
+                .filter(cell -> cell.getEntity() instanceof Tree)
+                .count();
+
+        double calculatedChance = (treesAround > 0) ? chance * (1.0 / treesAround) : 1;
+        calculatedChance /= 10;
+
         age--;
 
-        if (Math.random() < chance) {
-            GameMap gameMap = cell.getGameMap();
-            List<Cell> neighbors = gameMap.getCellsAround(cell.getPosition(), 1);
+        if (Math.random() < calculatedChance) {
 
-            Collections.shuffle(neighbors);
+            Collections.shuffle(oneCellsNeighbors);
 
-            for (Cell neighbor : neighbors) {
+            for (Cell neighbor : oneCellsNeighbors) {
                 if (neighbor.getEntity() == null) {
-                    neighbor.setEntity(new Tree(neighbor, (int) (Math.random() * 10 + 1)));
+                    neighbor.setEntity(new Tree(neighbor, (int) (Math.random() * 60 + 1)));
                     Button button = neighbor.getButton();
                     if (button != null) {
                         button.setStyle("-fx-background-color: green;");
@@ -62,8 +69,8 @@ public class Tree extends AbstractEntity {
     }
 
     private void removeTree() {
-        cell.setEntity(null);
-        Button button = cell.getButton();
+        getCurrentCell().setEntity(null); // Используем getCurrentCell()
+        Button button = getCurrentCell().getButton(); // Используем getCurrentCell()
         if (button != null) {
             button.setStyle("-fx-background-color: lightgray;");
             button.setText("");
