@@ -7,7 +7,7 @@ public class Cell {
     private final Position position;
     private AbstractEntity entity;
     private Button button;
-    private GameMap gameMap; // Ссылка на карту
+    private GameMap gameMap;
 
     public Cell(Position position) {
         this.position = position;

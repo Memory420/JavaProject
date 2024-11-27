@@ -1,7 +1,7 @@
 package Entities;
 
-import javafx.scene.control.Button;
 import Utils.Cell;
+import javafx.scene.control.Button;
 
 public abstract class AbstractEntity {
     private Cell currentCell;

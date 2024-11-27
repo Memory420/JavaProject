@@ -1,13 +1,13 @@
 package Utils;
 
-import Entities.Tree;
+import Entities.*;
 
 public class SimulationLogger {
-    private int totalTicks; // Общее количество тиков
-    private int totalCells; // Общее количество клеток
-    private int extinctionTick = -1; // Тик массового вымирания (-1, если не произошло)
-    private double[] fillPercentages; // Уровень заполненности на каждом тике
-    private boolean extinctionLogged = false; // Флаг, чтобы логировать вымирание только один раз
+    private int totalTicks;
+    private int totalCells;
+    private int extinctionTick = -1;
+    private double[] fillPercentages;
+    private boolean extinctionLogged = false;
 
     public SimulationLogger(int totalCells, int maxTicks) {
         this.totalCells = totalCells;
@@ -16,28 +16,29 @@ public class SimulationLogger {
 
     public void update(GameMap gameMap, int tick) {
         int totalTreesNow = 0;
+        int totalHerbivoresNow = 0;
+        int totalPredatorsNow = 0;
+        int totalPredatorOffsprings = 0;
 
-        // Считаем текущее количество деревьев
         for (Cell cell : gameMap.getCells()) {
             if (cell.getEntity() instanceof Tree) {
                 totalTreesNow++;
+            } else if (cell.getEntity() instanceof Herbivore) {
+                totalHerbivoresNow++;
             }
         }
 
-        // Сохраняем уровень заполненности
-        fillPercentages[tick] = (double) totalTreesNow / totalCells * 100;
-
-        // Проверяем массовое вымирание
-        if (totalTreesNow == 0 && !extinctionLogged) {
-            extinctionTick = tick; // Фиксируем тик, на котором произошло вымирание
-            extinctionLogged = true;
-        }
-
         totalTicks = tick;
+
+        System.out.println("Tick: " + tick);
+        System.out.println("Trees: " + totalTreesNow);
+        System.out.println("Herbivores: " + totalHerbivoresNow);
+        System.out.println("Predators: " + totalPredatorsNow);
+        System.out.println("Predator Offsprings: " + totalPredatorOffsprings);
+        System.out.println("-------------------------");
     }
 
-    public void printFinalStatistics(double percentage) {
-        System.out.println("Current Percent: " + percentage);
+    public void printFinalStatistics() {
         System.out.println("Final Simulation Statistics:");
         System.out.println("Total Ticks: " + totalTicks);
         System.out.println("Extinction Tick: " + (extinctionTick == -1 ? "No extinction" : extinctionTick));
